@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -12,7 +11,7 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusOK, gin.H {
 			"message": "ok",
 		})
 	})
@@ -24,14 +23,17 @@ func main() {
 			return
 		}
 
-		filename, err := uuid.Parse(filepath.Base(file.Filename))
-		if err != nil {
+		filename := uuid.New().String()
+		if err := c.SaveUploadedFile(file, filename); err != nil {
 			c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
+			return
 		}
-		c.JSON(http.StatusOK, gin.H{
+
+		c.JSON(http.StatusOK, gin.H {
 			"fileName": filename,
 		})
 	})
 	
 	r.Run(":8080")
+}
 }
